@@ -4,7 +4,6 @@
 #include <semaphore.h>
 
 #define NUM_PHILOSOPHERS 5
-#define MAX_EATING_ITERATIONS 3 // Termination condition: Each philosopher eats 5 times
 #define THINKING 0
 #define HUNGRY 1
 #define EATING 2
@@ -14,12 +13,10 @@
 int state[NUM_PHILOSOPHERS];
 sem_t forks[NUM_PHILOSOPHERS];
 sem_t mutex;
-int eating_count[NUM_PHILOSOPHERS] = {0};
 
 void *philosopher(void *arg) {
     int philosopher_id = *((int *)arg);
-    int iterations = 0;
-    while (iterations < MAX_EATING_ITERATIONS) {
+    while (1) {
         printf("Philosopher %d is thinking.\n", philosopher_id);
 
         sleep(rand() % 3); // Simulate thinking
@@ -42,13 +39,7 @@ void *philosopher(void *arg) {
         test(LEFT);
         test(RIGHT);
         sem_post(&mutex);
-
-        iterations++;
-        eating_count[philosopher_id] = iterations;
     }
-
-    printf("Philosopher %d has finished eating %d times and is exiting.\n", philosopher_id, MAX_EATING_ITERATIONS);
-    return NULL;
 }
 
 void test(int philosopher_id) {
